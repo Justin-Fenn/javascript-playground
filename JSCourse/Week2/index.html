@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <script type="text/javascript" src="./dist/maze-app.js"></script>
+        <style>
+            .node circle {
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 3px;
+            }
+
+            .node text { font: 12px sans-serif; }
+
+            .node--internal text {
+            text-shadow: 0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff;
+            }
+
+            .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 2px;
+            }
+
+            .stop circle{
+                fill: #a30000;
+                stroke: black;
+            }
+
+            .continue circle{
+                fill: #fff;
+                stroke: steelblue;
+            }
+
+            .finish circle{
+                fill: #007c10;
+                stroke: #917400;
+            }            
+            
+        </style>
+    </head>
+    <canvas width="960" height="960"></canvas>
+    <body>
+    </body>
+</html>
