@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import { generateTree, forceDirected } from './graphics';
+import { exampleTree } from './data/testData';
 
 function visitNode(guid, path) {
   return fetch(`http://dealeron-maze.s3-website-us-east-1.amazonaws.com/${guid}.txt`)
@@ -18,7 +19,9 @@ function visitNode(guid, path) {
 
 
 function run(){
-  visitNode("index", []).then(tree => forceDirected(tree));
+  //visitNode("index", []).then(tree => forceDirected(tree));
+  //forceDirected(exampleTree);
+  generateTree(exampleTree);
 }
 
 
