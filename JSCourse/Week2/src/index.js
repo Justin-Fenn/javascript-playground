@@ -1,4 +1,3 @@
-// src/index.js
 import run from './mazerunner';
 import visuals from './content';
 import * as maze3d from './maze-graphics';
@@ -10,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let x = (window.innerWidth/2)-150;
     let y = (window.innerHeight/2)-300;
     //maze3d.addPipe(0, 250,0);
-    //maze3d.addOrbital();
+    //maze3d.addOrbital(4);
     //console.log("height: "+y);
     //console.log("width: "+x);
     maze3d.addPipesFromGraph();

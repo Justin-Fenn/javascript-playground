@@ -11,7 +11,7 @@ var meshes = [];
 var orbits = [];
 //var texture = new THREE.TextureLoader().load( "test2.gif" );
 
-const DEPTH_SEPARATION = 30;
+const DEPTH_SEPARATION = 25;
 const WIDTH_SEPARATION = 10;
 const TREE_WIDTH = 30;
 const PIPE_LENGTH = 30;
@@ -24,19 +24,32 @@ const Positions = {
   RIGHT: window.innerWidth/2
 }
 
+const sphereGeo = new THREE.SphereGeometry(10, 32, 32);
+const material = new THREE.MeshPhongMaterial( {color:0x009900, side:THREE.DoubleSide} );
+
+var lineMaterial = new THREE.LineBasicMaterial({
+	color: 0x0000ff
+});
+
+var lineGeo = new THREE.Geometry();
+lineGeo.vertices.push(
+	new THREE.Vector3( 0, 0, 0 ),
+	new THREE.Vector3( 0, DEPTH_SEPARATION, 0 )
+);
+
 export function init() {
   camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );
   camera.position.z = 400;
   scene = new THREE.Scene();
 
-  scene.background = new THREE.Color( 0x000000 );
+  scene.background = new THREE.Color( 0xffffff );
 
   addLight();
 
 	// controls
 	controls = new OrbitControls( camera );
   controls.minDistance = 100;
-  controls.maxDistance = 500;
+  controls.maxDistance = 1000;
 	
 	// axes
   scene.add( new THREE.AxisHelper( 20 ) );
@@ -92,14 +105,32 @@ export function addPipe(x,y,r){
 
 }
 
-export function addOrbital(){
+export function addOrbital(numChildren){
   let sphere = new SphereConnector(new THREE.Vector3(0,0,0));
-  let pipe = new Pipe(new THREE.Vector3(0,90,0), {});
   let parent = new THREE.Object3D();
-  scene.add(parent);
-  parent.add(pipe);
-  orbits.push(parent);
-  scene.add(sphere);
+
+  scene.add(parent)
+  let f = 2*Math.PI/(numChildren+1);
+
+  for(let i = 1; i<numChildren+1; i++){
+    let pipe = new Pipe(new THREE.Vector3(0,25,0), {});
+    let pivot = new THREE.Object3D();
+    parent.add(pivot);
+    pivot.rotation.z = i*f;
+    pivot.add(pipe);
+
+    let parent1 = new THREE.Object3D();
+    for(let j=0; j<numChildren;j++){
+      let pipe1 = new Pipe(new THREE.Vector3(0,25,0), {});
+      let pivot1 = new THREE.Object3D();
+      parent1.add(pivot1);
+      pivot1.rotation.z = (i+1)*f;
+      pivot1.add(pipe);
+    }
+  }
+
+  //orbits.push(parent);
+  //scene.add(sphere);
   //scene.add(pipe);
 }
 
@@ -107,13 +138,25 @@ export function addPipesFromGraph(graphIn){
   let graph = graphIn || exampleTree;
   graph = trimFat(graph);
 
-  //let pipe = new Pipe(new THREE.Vector3(0,0,0), { guid: graph.guid, status: graph.status });
+  console.log(graph);
   let pipeGraph = graphToPipesRecursive(graph);
-  console.log(pipeGraph);
+  pipeGraph.position.y = 240;
+  pipeGraph.position.x = -140;
   setPipeGroupPositions(pipeGraph, TREE_WIDTH);
-  pipeGraph.position.y = 200;
-  //meshes.push(pipeGraph);
   scene.add(pipeGraph);
+
+  let root = new THREE.Mesh(sphereGeo, material);
+  scene.add(root);
+  let pipeGraph2 = getConnection(graph, root);
+  //let pipe = new Pipe(new THREE.Vector3(0,0,0), { guid: graph.guid, status: graph.status });
+  //let pipeGraph = graphToPipesRecursive(graph);
+  console.log(root);
+
+  // pipeGraph2.position.y = 250;
+  pipeGraph2.position.x = 200;
+  //meshes.push(pipeGraph);
+  //orbits.push(...pipeGraph);
+
 }
 
 function graphToPipesRecursive(startNode){
@@ -127,6 +170,34 @@ function graphToPipesRecursive(startNode){
     let childrenToVisit = startNode.children.map(childNode=>graphToPipesRecursive(childNode));
     return pipe.add(...childrenToVisit);
   }
+}
+
+function getConnection(graph,root){
+  //console.log(graph);
+  let numChildren = graph.children.length;
+
+  let pivot = new THREE.Object3D();//new THREE.Mesh(sphereGeo, material);
+  pivot.position.z = 20;
+  let f = Math.PI/(numChildren+1);
+  for(let i = 0; i<numChildren; i++){
+    pivot.rotation.z = (i+1)*f;
+    //pivot.position.z += 10;
+    root.add(pivot);
+
+    let line = new THREE.Line( lineGeo, lineMaterial );
+    pivot.add(line);
+
+    let sphere = new THREE.Mesh(sphereGeo, material);
+    sphere.position.y = DEPTH_SEPARATION;
+    pivot.add(sphere);
+
+    getConnection(graph.children[i], sphere);
+    //let children = getConnection(graph.children[i]);
+    //console.log(children);
+    //children.position.y = 140;
+    //pivot.add(children);
+  }
+  return root;
 }
 
 function setPipeGroupPositions(pipeGroup, w){

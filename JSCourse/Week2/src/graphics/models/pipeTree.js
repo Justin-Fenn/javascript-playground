@@ -69,4 +69,8 @@ function setPipeGroupPositions(pipeGroup, w){
 }
 
 
-
+function trimFat(node){
+  let childrenRemaining = node.children.filter(child=>child.status != 'stop').map(trimFat);
+  node.children = childrenRemaining;
+  return node;
+}
