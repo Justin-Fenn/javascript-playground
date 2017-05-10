@@ -43,10 +43,8 @@ export default {
 <style lang="scss" scoped>
 .message {
   height: 10vh;
-  border: solid lightgray 1px;
+  border-top: solid lightgray 1px;
   display: flex;
-  border-radius: 8px;
-  background-color: #FFFFFF;
   justify-content: space-between;
   padding: 15px;
 }
@@ -55,6 +53,8 @@ img {
   max-height: 80%;
   max-width: 20%;
   margin-right: 15px;
+  border-radius: 50%;
+  background-color: #D6D5D5;
   /*border: dotted cadetblue 1px;*/
 }
 
@@ -69,24 +69,19 @@ img {
   margin: 0;
   font-weight: bold;
   font-size: x-large;
-  color: #35495E;
-
-}
-
-.username:hover {
   color: #41B883;
 }
 
 .time-posted {
   margin: 0;
-  font-size: 80%;
+  font-size: 60%;
   color: #D6D5D5;
   text-transform: uppercase;
   letter-spacing: 3px;
 }
 
 .message-text {
-  font-weight: 400;
+  color: #D6D5D5;
 }
 
 @media only screen and (min-width: 900px) {

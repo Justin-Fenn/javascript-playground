@@ -1,12 +1,10 @@
 <template>
   <div class="stream">
-    <div class="container">
-      <ul>
-        <li v-for="msg in messages">
-          <message :message-in="msg" v-scroll-lock></message>
-        </li>
-      </ul>
-    </div>
+    <ul>
+      <li v-for="msg in messages">
+        <message :message-in="msg" v-scroll-lock></message>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -27,13 +25,13 @@ export default {
   directives: {
     scrollLock: {
       inserted: function(el){
-        let containerElement = document.getElementsByClassName("container")[0];
+        let containerElement = document.getElementsByClassName("stream")[0];
         containerElement.scrollTop = containerElement.scrollHeight;
       }
     }
   },
   created(){
-    this.$store.dispatch('getInitialMessages');
+    this.$store.dispatch('connectRoom', 'sample');
   }
 };
 
@@ -41,17 +39,10 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style lang="scss" scoped>
 .stream {
-  padding: 0 0px;
-  overflow: hidden;
-}
-
-.container {
-  height: 100%;
-  width: 100%;
   overflow-y: auto;
-  padding: 20px;
+  background-color: #35495E;
 }
 
 ul {

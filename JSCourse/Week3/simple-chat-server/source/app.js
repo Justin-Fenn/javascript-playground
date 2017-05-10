@@ -62,7 +62,7 @@ const Messages = {
 // WebSocket setup
 
 function addRoom(room) {
-    const roomState = { createdAt: Date.now(), users: {}, messages: [] };
+    const roomState = { createdAt: Date.now(), users: [], messages: [] };
     rooms.set(room, roomState);
     console.info(`Adding room ${room}`);
     const conn = io.of(`/rooms/${room}`);
@@ -71,9 +71,9 @@ function addRoom(room) {
         const userId = uuid.v4();
         console.info(`Room ${room}: user ${userId} joined`);
 
-        const user = { connected: true };
-        roomState.users[userId] = user;
-        conn.emit(Messages.USER_JOINED, {userId});
+        const user = { id: userId, connected: true };
+        roomState.users.push(user);
+        conn.emit(Messages.USER_JOINED, user);
 
         socket.on(Messages.SEND, message => {
             if (typeof(message) !== "string") {
@@ -93,7 +93,7 @@ function addRoom(room) {
         socket.on(Messages.DISCONNECT, () => {
             console.info(`Room ${room}: user ${userId} disconnected`);
             user.connected = false;
-            conn.emit(Messages.USER_DISCONNECTED, {userId});
+            conn.emit(Messages.USER_DISCONNECTED, user);
         });
     });
 }
